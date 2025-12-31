@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service       # Service 이름 (DNS 이름이 됨)
+spec:
+  type: ClusterIP           # 기본값, 생략 가능
+  selector:                 # ⭐ 어떤 Pod에게 트래픽을 보낼지
+    app: nginx              # app=nginx 라벨이 있는 Pod들
+  ports:
+    - port: 80                # Service가 받는 포트
+      targetPort: 80          # Pod로 전달할 포트

@@ -489,3 +489,124 @@ deployment.apps "nginx-deployment" deleted
 
 <br />
 
+### 0009
+
+```
+kubectl apply -f nginx-deployment.yaml
+kubectl get pods -l app=nginx
+
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-7dc7bfbb4b-5vmld   1/1     Running   0          12s
+nginx-deployment-7dc7bfbb4b-b8bbp   1/1     Running   0          12s
+nginx-deployment-7dc7bfbb4b-h8njf   1/1     Running   0          12s
+nginx-deployment-7dc7bfbb4b-hc2hd   1/1     Running   0          12s
+nginx-deployment-7dc7bfbb4b-r74tj   1/1     Running   0          12s
+```
+
+```
+kubectl apply -f nginx-service-clusterip.yaml
+
+service/nginx-service created
+```
+
+```
+kubectl get services
+kubectl get svc
+
+NAME            TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+kubernetes      ClusterIP   10.96.0.1      <none>        443/TCP   7h
+nginx-service   ClusterIP   10.108.68.21   <none>        80/TCP    11s
+```
+
+```
+kubectl describe service nginx-service
+
+NAME            TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+kubernetes      ClusterIP   10.96.0.1      <none>        443/TCP   7h
+nginx-service   ClusterIP   10.108.68.21   <none>        80/TCP    11s
+jake@KimJungIns-MacBook-Air p-14653-1-mission % kubectl describe service nginx-service
+Name:              nginx-service
+Namespace:         default
+Labels:            <none>
+Annotations:       <none>
+Selector:          app=nginx
+Type:              ClusterIP
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                10.108.68.21
+IPs:               10.108.68.21
+Port:              <unset>  80/TCP
+TargetPort:        80/TCP
+Endpoints:         10.1.0.46:80,10.1.0.47:80,10.1.0.48:80 + 2 more...
+Session Affinity:  None
+Events:            <none>
+```
+
+```
+kubectl run curl-test \
+  --image=curlimages/curl \
+  --restart=Never \
+  --rm -i -- \
+  curl -v http://nginx-service/
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0   0     0   0     0     0     0  --:--:-- --:--:-- --:--:--     0* Host nginx-service:80 was resolved.
+* IPv6: (none)
+* IPv4: 10.108.68.21
+*   Trying 10.108.68.21:80...
+* Established connection to nginx-service (10.108.68.21 port 80) from 10.1.0.52 port 54180 
+* using HTTP/1.x
+> GET / HTTP/1.1
+> Host: nginx-service
+> User-Agent: curl/8.17.0
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 200 OK
+< Server: nginx/1.25.5
+< Date: Wed, 31 Dec 2025 07:21:25 GMT
+< Content-Type: text/html
+< Content-Length: 615
+< Last-Modified: Tue, 16 Apr 2024 14:29:59 GMT
+< Connection: keep-alive
+< ETag: "661e8b67-267"
+< Accept-Ranges: bytes
+< 
+{ [615 bytes data]
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+100   615 100   615   0     0  8960     0  --:--:-- --:--:-- --:--:--  9044
+* Connection #0 to host nginx-service:80 left intact
+pod "curl-test" deleted
+```
+
+```
+kubectl delete -f nginx-service-clusterip.yaml
+kubectl delete service nginx-service
+
+service "nginx-service" deleted
+```
+
+<br />

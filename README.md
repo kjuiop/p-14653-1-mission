@@ -427,3 +427,65 @@ nginx-deployment-7dc7bfbb4b-pncr9   1/1     Running   0          5s
 nginx-deployment-7dc7bfbb4b-wdtfm   1/1     Running   0          78s
 nginx-deployment-7dc7bfbb4b-zbw52   1/1     Running   0          78s
 ```
+
+<br />
+
+### 0008
+
+```
+kubectl set image deployment/nginx-deployment nginx=nginx:1.26
+
+deployment.apps/nginx-deployment image updated
+```
+
+```
+kubectl rollout status deployment/nginx-deployment
+
+deployment "nginx-deployment" successfully rolled out
+```
+
+```
+kubectl get rs
+
+nginx-deployment-7dc7bfbb4b   0         0         0       8m21s
+nginx-deployment-866fbb9bfc   5         5         5       43s
+```
+
+```
+kubectl rollout history deployment/nginx-deployment
+
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+```
+
+```
+kubectl rollout undo deployment/nginx-deployment
+kubectl rollout undo deployment/nginx-deployment --to-revision=1
+
+deployment.apps/nginx-deployment rolled back
+```
+
+```
+kubectl describe deployment nginx-deployment
+
+Pod Template:
+  Labels:  app=nginx
+  Containers:
+   nginx:
+    Image:      nginx:1.25
+    Port:       80/TCP
+    Host Port:  0/TCP
+    Limits:
+      cpu:     200m
+      memory:  128Mi
+```
+
+```
+kubectl delete deployment nginx-deployment
+
+deployment.apps "nginx-deployment" deleted
+```
+
+<br />
+

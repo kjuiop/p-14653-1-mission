@@ -610,3 +610,70 @@ service "nginx-service" deleted
 ```
 
 <br />
+
+### 0010
+
+```
+kubectl apply -f nginx-deployment.yaml
+
+kubectl get pods -l app=nginx
+
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-7dc7bfbb4b-5vmld   1/1     Running   0          7m52s
+nginx-deployment-7dc7bfbb4b-b8bbp   1/1     Running   0          7m52s
+nginx-deployment-7dc7bfbb4b-h8njf   1/1     Running   0          7m52s
+nginx-deployment-7dc7bfbb4b-hc2hd   1/1     Running   0          7m52s
+nginx-deployment-7dc7bfbb4b-r74tj   1/1     Running   0          7m52s
+```
+
+```
+kubectl apply -f nginx-service-nodeport.yaml
+
+service/nginx-nodeport created
+```
+
+```
+kubectl get service nginx-nodeport
+
+NAME             TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+nginx-nodeport   NodePort   10.98.42.165   <none>        80:30080/TCP   13s
+
+# 브라우저에서 접근
+# http://localhost:30080
+
+curl http://localhost:30080
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+```
+
+```
+kubectl delete -f nginx-service-nodeport.yaml
+kubectl delete service nginx-nodeport
+
+service "nginx-nodeport" deleted
+```
+
+<br />
+

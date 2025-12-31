@@ -354,3 +354,76 @@ deployment.apps "nginx-deployment" deleted
 
 <br />
 
+### 0007
+
+```
+kubectl scale deployment nginx-deployment --replicas=5
+
+deployment.apps/nginx-deployment scaled
+```
+
+```
+kubectl get pods -l app=nginx -w
+
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-7dc7bfbb4b-2hbrd   1/1     Running   0          15s
+nginx-deployment-7dc7bfbb4b-fmzjw   1/1     Running   0          20s
+nginx-deployment-7dc7bfbb4b-r4ttc   1/1     Running   0          20s
+nginx-deployment-7dc7bfbb4b-sjjh7   1/1     Running   0          20s
+nginx-deployment-7dc7bfbb4b-ws99t   1/1     Running   0          15s
+```
+
+```
+kubectl get deployment nginx-deployment
+
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-deployment   5/5     5            5           41s
+```
+
+```
+kubectl scale deployment nginx-deployment --replicas=2
+
+deployment.apps/nginx-deployment scaled
+```
+
+```
+kubectl get deployment nginx-deployment
+
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-deployment   2/2     2            2           79s
+```
+
+```
+kubectl apply -f nginx-deployment.yaml
+
+deployment.apps/nginx-deployment configured
+```
+
+```
+kubectl get deployment nginx-deployment
+
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-deployment   5/5     5            5           2m25s
+```
+
+```
+kubectl get pods -l app=nginx
+
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-7dc7bfbb4b-2hbrd   1/1     Running   0          3m10s
+nginx-deployment-7dc7bfbb4b-b5ks7   1/1     Running   0          56s
+nginx-deployment-7dc7bfbb4b-fmzjw   1/1     Running   0          3m15s
+nginx-deployment-7dc7bfbb4b-wdtfm   1/1     Running   0          56s
+nginx-deployment-7dc7bfbb4b-zbw52   1/1     Running   0          56s
+
+kubectl delete pod nginx-deployment-7dc7bfbb4b-2hbrd
+
+kubectl get pods -l app=nginx
+
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-7dc7bfbb4b-b5ks7   1/1     Running   0          78s
+nginx-deployment-7dc7bfbb4b-fmzjw   1/1     Running   0          3m37s
+nginx-deployment-7dc7bfbb4b-pncr9   1/1     Running   0          5s
+nginx-deployment-7dc7bfbb4b-wdtfm   1/1     Running   0          78s
+nginx-deployment-7dc7bfbb4b-zbw52   1/1     Running   0          78s
+```

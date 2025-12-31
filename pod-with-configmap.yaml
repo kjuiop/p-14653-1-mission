@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-pod
+spec:
+  containers:
+    - name: app
+      image: nginx:1.25
+      env:
+        - name: CUSTOM_ENV             # Pod에서 사용할 변수 이름
+          valueFrom:
+            configMapKeyRef:
+              name: app-config         # ConfigMap 이름
+              key: APP_ENV             # ConfigMap의 키

@@ -751,3 +751,81 @@ kubectl delete deployment nginx-deployment
 
 deployment.apps "nginx-deployment" deleted
 ```
+
+<br />
+
+### 0012
+
+```
+# 직접 값 지정
+kubectl create configmap app-config \
+  --from-literal=APP_ENV=development \
+  --from-literal=APP_DEBUG=true
+
+# 파일에서 생성
+kubectl create configmap nginx-config \
+  --from-file=app-configmap.yaml
+
+# 디렉토리의 모든 파일
+kubectl create configmap app-configs \
+  --from-file=./
+  
+configmap/nginx-config created
+```
+
+```
+kubectl get configmap
+kubectl get cm
+
+NAME               DATA   AGE
+kube-root-ca.crt   1      7h16m
+nginx-config       1      112m
+```
+
+```
+kubectl delete configmap nginx-config
+kubectl delete cm nginx-config
+
+configmap "nginx-config" deleted
+```
+
+```
+kubectl apply -f pod-with-configmap.yaml
+
+pod/app-pod created
+```
+
+```
+kubectl exec -it app-pod -- bash
+
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_SERVICE_PORT=443
+HOSTNAME=app-pod
+PWD=/
+PKG_RELEASE=1~bookworm
+HOME=/root
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+NJS_VERSION=0.8.4
+TERM=xterm
+SHLVL=1
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+KUBERNETES_SERVICE_HOST=10.96.0.1
+KUBERNETES_PORT=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP_PORT=443
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+NGINX_VERSION=1.25.5
+NJS_RELEASE=3~bookworm
+CUSTOM_ENV=development
+_=/usr/bin/env
+```
+
+```
+kubectl delete -f pod-with-configmap.yaml
+kubectl delete -f app-configmap.yaml
+kubectl delete pod app-pod
+kubectl delete configmap app-config
+
+pod "app-pod" deleted
+configmap "app-config" deleted
+```

@@ -1,0 +1,20 @@
+apiVersion: v1        # ① Kubernetes API 버전
+kind: Pod             # ② 리소스 종류
+metadata:             # ③ 메타데이터 (이름, 라벨 등)
+  name: nginx-pod
+  labels:
+    app: nginx
+    environment: dev
+spec:                 # ④ 실제 스펙 (원하는 상태)
+  containers:
+    - name: nginx
+      image: nginx:1.25
+      ports:
+        - containerPort: 80
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "100m"
+        limits:
+          memory: "128Mi"
+          cpu: "200m"

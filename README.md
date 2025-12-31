@@ -180,3 +180,51 @@ kubectl delete pod nginx-pod
 pod "nginx-pod" deleted
 
 ```
+
+<br />
+
+### 0004
+
+```
+kubectl apply -f nginx-pod.yaml
+
+pod/nginx-pod created
+```
+
+```
+kubectl get pods -o wide
+
+NAME        READY   STATUS    RESTARTS   AGE   IP          NODE             NOMINATED NODE   READINESS GATES
+nginx-pod   1/1     Running   0          20s   10.1.0.21   docker-desktop   <none>           <none>
+```
+
+```
+kubectl get pod nginx-pod -o yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"labels":{"app":"nginx","environment":"dev"},"name":"nginx-pod","namespace":"default"},"spec":{"containers":[{"image":"nginx:1.25","name":"nginx","ports":[{"containerPort":80}],"resources":{"limits":{"cpu":"200m","memory":"128Mi"},"requests":{"cpu":"100m","memory":"64Mi"}}}]}}
+  creationTimestamp: "2025-12-31T06:43:27Z"
+  labels:
+    app: nginx
+    environment: dev
+  name: nginx-pod
+  namespace: default
+  resourceVersion: "28633"
+...
+```
+
+```
+kubectl get pods -l app=nginx
+kubectl get pods -l environment=dev
+```
+
+```
+kubectl delete -f nginx-pod.yaml
+
+pod "nginx-pod" deleted
+```
+

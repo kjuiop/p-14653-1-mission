@@ -1,0 +1,28 @@
+apiVersion: apps/v1        # Pod는 v1, Deployment는 apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3              # ⭐ Pod를 3개 유지
+  selector:                # ⭐ 관리할 Pod를 찾는 조건
+    matchLabels:
+      app: nginx
+  template:                # ⭐ Pod 템플릿 (Pod 정의와 동일)
+    metadata:
+      labels:
+        app: nginx         # selector와 일치해야 함!
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.25
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"

@@ -300,3 +300,57 @@ kubectl delete -f multi-container-pod.yaml
 pod "multi-container-pod" deleted
 ```
 
+<br />
+
+### 0006
+
+```
+kubectl apply -f nginx-deployment.yaml
+
+deployment.apps/nginx-deployment created
+```
+
+```
+kubectl get deployments
+kubectl get deploy
+
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-deployment   3/3     3            3           35s
+```
+
+```
+kubectl get replicasets
+kubectl get rs
+
+NAME                          DESIRED   CURRENT   READY   AGE
+nginx-deployment-7dc7bfbb4b   3         3         3       68s
+```
+
+```
+kubectl get pods -l app=nginx
+
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-7dc7bfbb4b-5spkq   1/1     Running   0          85s
+nginx-deployment-7dc7bfbb4b-fbrqs   1/1     Running   0          85s
+nginx-deployment-7dc7bfbb4b-qb8l4   1/1     Running   0          85s
+```
+
+```
+kubectl delete pod nginx-deployment-7dc7bfbb4b-5spkq 
+kubectl get pods -l app=nginx
+
+NAME                                READY   STATUS    RESTARTS   AGE
+nginx-deployment-7dc7bfbb4b-fbrqs   1/1     Running   0          2m12s
+nginx-deployment-7dc7bfbb4b-j7lvp   1/1     Running   0          3s
+nginx-deployment-7dc7bfbb4b-qb8l4   1/1     Running   0          2m12s
+```
+
+```
+kubectl delete -f nginx-deployment.yaml
+kubectl delete deployment nginx-deployment
+
+deployment.apps "nginx-deployment" deleted
+```
+
+<br />
+

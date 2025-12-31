@@ -677,3 +677,77 @@ service "nginx-nodeport" deleted
 
 <br />
 
+### 0011
+
+```
+kubectl apply -f nginx-service-lb.yaml
+kubectl get service nginx-lb
+
+NAME       TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+nginx-lb   LoadBalancer   10.105.26.14   localhost     80:32418/TCP   3s
+```
+
+```
+curl http://localhost
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+```
+
+```
+kubectl describe service nginx-lb
+
+Name:                     nginx-lb
+Namespace:                default
+Labels:                   <none>
+Annotations:              <none>
+Selector:                 app=nginx
+Type:                     LoadBalancer
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.105.26.14
+IPs:                      10.105.26.14
+LoadBalancer Ingress:     localhost
+Port:                     <unset>  80/TCP
+TargetPort:               80/TCP
+NodePort:                 <unset>  32418/TCP
+Endpoints:                10.1.0.46:80,10.1.0.47:80,10.1.0.48:80 + 2 more...
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+```
+
+```
+kubectl delete -f nginx-service-lb.yaml
+kubectl delete service nginx-lb
+
+service "nginx-lb" deleted
+```
+
+```
+kubectl delete service nginx-service nginx-nodeport nginx-lb
+kubectl delete deployment nginx-deployment
+
+deployment.apps "nginx-deployment" deleted
+```

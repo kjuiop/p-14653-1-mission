@@ -898,3 +898,60 @@ secret "db-secret" deleted
 
 <br />
 
+### 0014
+
+```
+# 스토리지 생성
+
+kubectl apply -f pv-local.yaml
+persistentvolume/local-pv created
+
+kubectl apply -f pvc-local.yaml
+persistentvolumeclaim/local-pvc created
+
+kubectl apply -f pod-with-pvc.yaml
+pod/pvc-pod created
+
+```
+
+```
+# PV 상태 확인
+kubectl get pv
+
+NAME       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM               STORAGECLASS   REASON   AGE
+local-pv   1Gi        RWO            Retain           Bound    default/local-pvc   manual                  50s
+```
+
+```
+# 1. Pod에 데이터 쓰기
+kubectl exec pvc-pod -- sh -c "echo 'Hello K8s' > /usr/share/nginx/html/index.html"
+
+# 2. 확인
+kubectl exec pvc-pod -- cat /usr/share/nginx/html/index.html
+Hello K8s
+
+# 3. Pod 삭제
+kubectl delete pod pvc-pod
+pod "pvc-pod" deleted
+
+# 4. Pod 다시 생성
+kubectl apply -f pod-with-pvc.yaml
+pod/pvc-pod created
+
+# 5. 데이터 확인 
+kubectl exec pvc-pod -- cat /usr/share/nginx/html/index.html
+Hello K8s
+```
+
+```
+kubectl delete -f pod-with-pvc.yaml
+pod "pvc-pod" deleted
+
+kubectl delete -f pvc-local.yaml
+persistentvolumeclaim "local-pvc" deleted
+
+kubectl delete -f pv-local.yaml
+persistentvolume "local-pv" deleted
+```
+
+<br />

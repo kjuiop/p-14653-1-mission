@@ -829,3 +829,72 @@ kubectl delete configmap app-config
 pod "app-pod" deleted
 configmap "app-config" deleted
 ```
+
+### 0013
+
+```
+# 명령어로 Secret 생성
+kubectl create secret generic db-secret \
+  --from-literal=username=admin \
+  --from-literal=password=secretpassword123
+```
+
+```
+# Secret 확인 (base64 인코딩됨)
+kubectl get secret db-secret -o yaml
+  
+apiVersion: v1
+data:
+  password: c2VjcmV0cGFzc3dvcmQxMjM=
+  username: YWRtaW4=
+kind: Secret
+metadata:
+  creationTimestamp: "2025-12-31T06:20:30Z"
+  name: db-secret
+  namespace: default
+  resourceVersion: "26953"
+  uid: aad89d6f-6bd5-42fc-8755-1f537ac4b0fe
+type: Opaque
+
+
+# base64 디코딩해서 확인
+kubectl get secret db-secret -o jsonpath='{.data.username}' | base64 -d
+admin
+```
+
+```
+# base64 인코딩
+echo -n "admin" | base64
+YWRtaW4=
+
+echo -n "secretpass123" | base64
+c2VjcmV0cGFzczEyMw==
+
+
+kubectl apply -f db-secret.yaml
+secret/db-secret configured
+```
+
+```
+kubectl apply -f pod-with-secret.yaml
+pod/db-app-pod created
+
+kubectl exec -it db-app-pod -- sh
+
+cat /etc/secrets/username
+admin
+
+cat /etc/secrets/password
+secretpass123
+```
+
+```
+kubectl delete -f pod-with-secret.yaml
+pod "db-app-pod" deleted
+
+kubectl delete -f db-secret.yaml
+secret "db-secret" deleted
+```
+
+<br />
+

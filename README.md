@@ -955,3 +955,63 @@ persistentvolume "local-pv" deleted
 ```
 
 <br />
+
+### 0015
+
+```
+kubectl apply -f namespace.yaml
+namespace/demo-app created
+
+kubectl apply -f backend-deployment.yaml
+deployment.apps/backend created
+service/backend-service created
+
+kubectl apply -f k8s-demo/
+
+
+kubectl apply -f frontend-deployment.yaml
+deployment.apps/frontend created
+service/frontend-service created
+```
+
+```
+kubectl get all -n demo-app
+
+NAME                            READY   STATUS    RESTARTS   AGE
+pod/backend-b5c8df878-8kv74     1/1     Running   0          2m33s
+pod/backend-b5c8df878-vkx4l     1/1     Running   0          2m33s
+pod/frontend-5fcfc7fdf4-5qh5s   1/1     Running   0          20s
+pod/frontend-5fcfc7fdf4-q8jkz   1/1     Running   0          20s
+
+NAME                       TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+service/backend-service    ClusterIP      10.107.159.113   <none>        8080/TCP       2m33s
+service/frontend-service   LoadBalancer   10.111.16.111    localhost     80:31552/TCP   20s
+
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/backend    2/2     2            2           2m33s
+deployment.apps/frontend   2/2     2            2           20s
+
+NAME                                  DESIRED   CURRENT   READY   AGE
+replicaset.apps/backend-b5c8df878     2         2         2       2m33s
+replicaset.apps/frontend-5fcfc7fdf4   2         2         2       20s
+```
+
+```
+kubectl exec -n demo-app -it \
+  $(kubectl get pod -n demo-app -l app=frontend -o jsonpath='{.items[0].metadata.name}') \
+  -- curl backend-service:8080
+  
+Hello from Backend!
+```
+
+```
+kubectl delete namespace demo-app
+namespace "demo-app" deleted
+
+# 개별 삭제
+kubectl delete -f frontend-deployment.yaml -n demo-app
+kubectl delete -f backend-deployment.yaml -n demo-app
+kubectl delete -f namespace.yaml
+```
+
+<br />
